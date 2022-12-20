@@ -322,7 +322,9 @@ var Game = {
   },
 
   listen: function () {
-		document.addEventListener('keydown', function (key) {
+    document.addEventListener('keydown', function (event) {
+      console.log(event.key);
+      if (['alt', 'control', 'shift', 'meta', 'altgraph'].indexOf(event.key.toLowerCase()) !== -1) return;
       // Handle the 'Press any key to begin' function and start the game.
       if (Pong.running === false) {
         Pong.running = true;
@@ -330,10 +332,10 @@ var Game = {
       }
 
       // Handle up arrow and w key events
-			if (key.keyCode === 38 || key.keyCode === 87) Pong.player.move = DIRECTION.UP;
+      if (event.keyCode === 38 || event.keyCode === 87) Pong.player.move = DIRECTION.UP;
 
       // Handle down arrow and s key events
-			if (key.keyCode === 40 || key.keyCode === 83) Pong.player.move = DIRECTION.DOWN;
+      if (event.keyCode === 40 || event.keyCode === 83) Pong.player.move = DIRECTION.DOWN;
     });
 
     // Stop the player from moving when there are no keys being pressed.
