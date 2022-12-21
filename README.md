@@ -1,5 +1,5 @@
-# pong-js
-Pong game implemented with javascript.
+# pong-js-entralpi
 
-Try it out!
-(https://gdube.github.io/pong-js/)
+Port of [gdube's pong-js](https://github.com/ecstrema/pong-js) for entralpi.
+
+[Play it!](https://github.com/ecstrema/pong-js)
