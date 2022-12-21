@@ -1,3 +1,5 @@
+import { BbBluetooth } from "./bluetooth.js";
+
 // Global Variables
 var DIRECTION = {
   IDLE: 0,
@@ -130,9 +132,13 @@ var Game = {
       if (this.ball.y <= 0) this.ball.moveY = DIRECTION.DOWN;
       if (this.ball.y >= this.canvas.height - this.ball.height) this.ball.moveY = DIRECTION.UP;
 
-      // Move player if they player.move value was updated by a keyboard event
-      if (this.player.move === DIRECTION.UP) this.player.y -= this.player.speed;
-      else if (this.player.move === DIRECTION.DOWN) this.player.y += this.player.speed;
+      if (!BbBluetooth.isConnected) {
+        // Move player if they player.move value was updated by a keyboard event
+        if (this.player.move === DIRECTION.UP) this.player.y -= this.player.speed;
+        else if (this.player.move === DIRECTION.DOWN) this.player.y += this.player.speed;
+      } else {
+        this.player.y = Math.max(BbBluetooth.data - 5, 0) / Math.max(BbBluetooth.userWeight - 5, 1) * this.canvas.height;
+      }
 
       // On new serve (start of each turn) move the ball to the correct side
       // and randomize the direction to add some challenge.
@@ -322,24 +328,50 @@ var Game = {
   },
 
   listen: function () {
-    document.addEventListener('keydown', function (event) {
-      console.log(event.key);
+    document.addEventListener('keydown', async function (event) {
       if (['alt', 'control', 'shift', 'meta', 'altgraph'].indexOf(event.key.toLowerCase()) !== -1) return;
       // Handle the 'Press any key to begin' function and start the game.
       if (Pong.running === false) {
-        Pong.running = true;
-        window.requestAnimationFrame(Pong.loop);
+        if (!BbBluetooth.hasTriedToConnect) {
+          BbBluetooth.connect(true).then(async () => {
+            await BbBluetooth.getUserWeight();
+          }).catch((err) => {
+            console.log("Error connecting to bluetooth device: " + err);
+            alert("Could not connect to bluetooth device, emulating real game instead.");
+            // Uncomment this line to emulate the game with mouse position instead of bluetooth data
+            // BbBluetooth.setupForMousePosData();
+            // await BbBluetooth.getUserWeight();
+          }).finally(() => {
+            Pong.running = true;
+            window.requestAnimationFrame(Pong.loop);
+          });
+        }
+        return;
       }
 
-      // Handle up arrow and w key events
-      if (event.keyCode === 38 || event.keyCode === 87) Pong.player.move = DIRECTION.UP;
+      if (!BbBluetooth.isConnected) {
+        switch (event.keyCode) {
+          // Handle up arrow and w key events
+          case 38:
+          case 87:
+            Pong.player.move = DIRECTION.UP;
+            break;
 
-      // Handle down arrow and s key events
-      if (event.keyCode === 40 || event.keyCode === 83) Pong.player.move = DIRECTION.DOWN;
+            // Handle down arrow and s key events
+          case 40:
+          case 83:
+            Pong.player.move = DIRECTION.DOWN;
+            break;
+
+          default:
+            console.log("unhandled key: " + event.key);
+            break;
+        }
+      }
     });
 
     // Stop the player from moving when there are no keys being pressed.
-    document.addEventListener('keyup', function (key) { Pong.player.move = DIRECTION.IDLE; });
+    document.addEventListener('keyup', function (_key) { Pong.player.move = DIRECTION.IDLE; });
   },
 
   // Reset the ball location, the player turns and set a delay before the next round begins.
