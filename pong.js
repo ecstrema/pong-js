@@ -328,6 +328,7 @@ var Game = {
   },
 
   listen: function () {
+    const otherThis = this;
     document.addEventListener('keydown', async function (event) {
       if (['alt', 'control', 'shift', 'meta', 'altgraph'].indexOf(event.key.toLowerCase()) !== -1) return;
       // Handle the 'Press any key to begin' function and start the game.
@@ -341,16 +342,18 @@ var Game = {
             // Uncomment this line to emulate the game with mouse position instead of bluetooth data
             const emulateWithMouse = true;
             if (emulateWithMouse) {
-              BbBluetooth.setupForMousePosData();
               await BbBluetooth.getUserWeight();
+              BbBluetooth.setupForMousePosData();
             }
-            Game.paddle.height = Game.player.height = 70;
+            otherThis.paddle.height = otherThis.player.height = 70;
           }).finally(() => {
             Pong.running = true;
             window.requestAnimationFrame(Pong.loop);
           });
         }
         else {
+          if (!BbBluetooth.isConnected)
+            otherThis.paddle.height = otherThis.player.height = 70;
           Pong.running = true;
           window.requestAnimationFrame(Pong.loop);
         }
@@ -365,7 +368,7 @@ var Game = {
             Pong.player.move = DIRECTION.UP;
             break;
 
-            // Handle down arrow and s key events
+          // Handle down arrow and s key events
           case 40:
           case 83:
             Pong.player.move = DIRECTION.DOWN;
