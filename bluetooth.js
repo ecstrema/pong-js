@@ -22,7 +22,7 @@ export class BbBluetooth {
     // send a mouse move event
     const ev = new MouseEvent("mousemove", {
       clientX: 0,
-      clientY: this.userWeight / 2 || 0
+      clientY: this.userWeight / 2 || 350
     });
     document.dispatchEvent(ev);
   }
