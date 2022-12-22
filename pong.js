@@ -137,7 +137,14 @@ var Game = {
         if (this.player.move === DIRECTION.UP) this.player.y -= this.player.speed;
         else if (this.player.move === DIRECTION.DOWN) this.player.y += this.player.speed;
       } else {
-        this.player.y = Math.max(BbBluetooth.data - 5, 0) / Math.max(BbBluetooth.userWeight - 5, 1) * this.canvas.height;
+        this.player.y = Math.max(BbBluetooth.data - 5, 0) / Math.max(BbBluetooth.userWeight - 3, 1) * this.canvas.height;
+        const o = {
+          y: this.player.y,
+          bbdata: BbBluetooth.data,
+          bbweight: BbBluetooth.userWeight,
+          canvasheight: this.canvas.height
+        }
+        console.log(o);
       }
 
       // On new serve (start of each turn) move the ball to the correct side
