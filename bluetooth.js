@@ -25,6 +25,8 @@ export class BbBluetooth {
     return new Promise((resolve, reject) => {
       const input = document.createElement("input");
       input.type = "number";
+      input.min = "0";
+      input.max = "1000";
       input.placeholder = "Weight in kg";
       input.style.position = "absolute";
       input.style.top = "50%";
@@ -39,6 +41,7 @@ export class BbBluetooth {
       input.style.color = "white";
 
       input.addEventListener("keydown", ev => {
+        ev.stopPropagation();
         if (ev.key === "Enter" && parseFloat(input.value)) {
           BbBluetooth.userWeight = parseFloat(input.value);
           input.remove();
