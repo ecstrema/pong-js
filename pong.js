@@ -335,16 +335,20 @@ var Game = {
         if (!BbBluetooth.hasTriedToConnect) {
           BbBluetooth.connect(true).then(async () => {
             await BbBluetooth.getUserWeight();
-          }).catch((err) => {
+          }).catch(async (err) => {
             console.log("Error connecting to bluetooth device: " + err);
             alert("Could not connect to bluetooth device, emulating real game instead.");
             // Uncomment this line to emulate the game with mouse position instead of bluetooth data
-            // BbBluetooth.setupForMousePosData();
-            // await BbBluetooth.getUserWeight();
+            BbBluetooth.setupForMousePosData();
+            await BbBluetooth.getUserWeight();
           }).finally(() => {
             Pong.running = true;
             window.requestAnimationFrame(Pong.loop);
           });
+        }
+        else {
+          Pong.running = true;
+          window.requestAnimationFrame(Pong.loop);
         }
         return;
       }
