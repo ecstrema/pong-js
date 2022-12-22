@@ -16,6 +16,7 @@ export class BbBluetooth {
 
   static setupForMousePosData() {
     BbBluetooth.isConnected = true;
+    BbBluetooth.data = ev.clientY;
     document.addEventListener("mousemove", ev => {
       BbBluetooth.data = ev.clientY;
     });
@@ -40,17 +41,71 @@ export class BbBluetooth {
       input.style.outline = "none";
       input.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
       input.style.color = "white";
+      input.style.zIndex = "11";
 
-      input.addEventListener("keydown", ev => {
+      // function to shake input field if no value is entered
+      const shake = () => {
+        input.style.transform = "translate(-50%, -50%) rotate(-5deg)";
+        setTimeout(() => {
+          input.style.transform = "translate(-50%, -50%) rotate(5deg)";
+          setTimeout(() => {
+            input.style.transform = "translate(-50%, -50%) rotate(-5deg)";
+            setTimeout(() => {
+              input.style.transform = "translate(-50%, -50%) rotate(5deg)";
+              setTimeout(() => {
+                input.style.transform = "translate(-50%, -50%)";
+              }, 100);
+            }, 100);
+          }, 100);
+        }, 100);
+      };
+
+      // add backdrop
+      const backdrop = document.createElement("div");
+      backdrop.style.position = "fixed";
+      backdrop.style.top = "0";
+      backdrop.style.left = "0";
+      backdrop.style.width = "100vw";
+      backdrop.style.height = "100vh";
+      backdrop.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+      backdrop.style.zIndex = "10";
+      backdrop.appendChild(input);
+
+      function handleKeyDown(ev) {
         ev.stopPropagation();
-        if (ev.key === "Enter" && parseFloat(input.value)) {
-          BbBluetooth.userWeight = parseFloat(input.value);
-          input.remove();
-          resolve();
+        if (ev.key === "Enter") {
+          const val = parseFloat(input.value);
+          if (val && val > 0 && val < 1000) {
+            BbBluetooth.userWeight = val;
+            backdrop.remove();
+            resolve();
+          } else {
+            shake();
+          }
         }
-      });
+      }
 
-      document.body.appendChild(input);
+      input.addEventListener("keydown", handleKeyDown);
+      backdrop.addEventListener("keydown", handleKeyDown)
+
+      input.addEventListener("click", (ev) => { ev.stopPropagation(); })
+
+      backdrop.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        ev.stopImmediatePropagation();
+        const val = parseFloat(input.value);
+        if (val && val > 0 && val < 1000) {
+          BbBluetooth.userWeight = val;
+          backdrop.remove();
+          resolve();
+        } else {
+          shake();
+        }
+      })
+
+
+
+      document.body.appendChild(backdrop);
       input.focus();
     });
   }

@@ -343,9 +343,8 @@ var Game = {
             if (emulateWithMouse) {
               BbBluetooth.setupForMousePosData();
               await BbBluetooth.getUserWeight();
-            } else {
-              Game.paddle.height = Game.player.height = 70;
             }
+            Game.paddle.height = Game.player.height = 70;
           }).finally(() => {
             Pong.running = true;
             window.requestAnimationFrame(Pong.loop);
