@@ -158,13 +158,11 @@ export class BbBluetooth {
             // cast to any to disable warning about value not being a property of event handler.
             /** @type {BluetoothRemoteGATTCharacteristic} */
             const target = ev.target;
-            if (target?.value?.getInt16(0)) {
-              BbBluetooth.data = target.value.getInt16(0);
-            }
-            else {
+            if (target?.value?.getInt16(0))
+              BbBluetooth.data = target.value.getInt16(0) / 100;
+            else
               BbBluetooth.data = 0;
-            }
-          });
+          })
           characteristic.startNotifications();
         } else {
           throw new Error("Cannot be notified by characteristic?... Weird");
