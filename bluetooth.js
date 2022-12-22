@@ -32,6 +32,7 @@ export class BbBluetooth {
       input.style.top = "50%";
       input.style.left = "50%";
       input.style.transform = "translate(-50%, -50%)";
+      input.style.width = "200px";
       input.style.fontSize = "2rem";
       input.style.padding = "1rem";
       input.style.border = "none";
