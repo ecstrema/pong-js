@@ -32,7 +32,7 @@ var Paddle = {
   new: function (side) {
     return {
       width: 18,
-      height: 70,
+      height: 140,
       x: side === 'left' ? 150 : this.canvas.width - 150,
       y: (this.canvas.height / 2) - 35,
       score: 0,
@@ -339,8 +339,13 @@ var Game = {
             console.log("Error connecting to bluetooth device: " + err);
             alert("Could not connect to bluetooth device, emulating real game instead.");
             // Uncomment this line to emulate the game with mouse position instead of bluetooth data
-            BbBluetooth.setupForMousePosData();
-            await BbBluetooth.getUserWeight();
+            const emulateWithMouse = true;
+            if (emulateWithMouse) {
+              BbBluetooth.setupForMousePosData();
+              await BbBluetooth.getUserWeight();
+            } else {
+              Game.paddle.height = Game.player.height = 70;
+            }
           }).finally(() => {
             Pong.running = true;
             window.requestAnimationFrame(Pong.loop);
