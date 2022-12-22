@@ -16,10 +16,15 @@ export class BbBluetooth {
 
   static setupForMousePosData() {
     BbBluetooth.isConnected = true;
-    BbBluetooth.data = ev.clientY;
     document.addEventListener("mousemove", ev => {
       BbBluetooth.data = ev.clientY;
     });
+    // send a mouse move event
+    const ev = new MouseEvent("mousemove", {
+      clientX: 0,
+      clientY: this.userWeight / 2 || 0
+    });
+    document.dispatchEvent(ev);
   }
 
   static getUserWeight() {
